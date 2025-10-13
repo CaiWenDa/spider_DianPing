@@ -3,17 +3,18 @@ import time
 import re
 import random
 from browser_client import BrowserClient
-from saver import save_csv
+import saver
 from logger import logger
 
 class DianPingSpider:
-    def __init__(self, keyword, city_id, num_pages, wait_range):
+    def __init__(self, keyword, city_id, num_pages, wait_range, output_file):
         self.keyword = keyword
         self.city_id = city_id
         self.num_pages = num_pages
         self.shop_data = [["店铺名称", "电话"]]
         self.browser_client = BrowserClient()
         self.wait_range = wait_range
+        self.output_file = output_file
 
     def parse_shop_page(self, shop_url):
         self.browser_client.get(shop_url)
@@ -44,11 +45,11 @@ class DianPingSpider:
         return self.shop_data
 
     def save_csv(self, output_file):
-        save_csv(output_file, self.shop_data)
+        saver.save_csv(output_file, self.shop_data)
         logger.info(f"数据已保存到 {output_file}")
 
     def add_csv_row(self, output_file, row):
-        add_csv_row(output_file, row)
+        saver.add_csv_row(output_file, row)
         logger.info(f"已添加新行到 {output_file}: {row}")
 
     def crawl(self):
@@ -80,10 +81,10 @@ class DianPingSpider:
                         try:
                             shop_item = self.parse_shop_page(shop_url)
                             self.shop_data.append(shop_item)
-                            self.add_csv_row(shop_item)
+                            self.add_csv_row(self.output_file, shop_item)
                             count += 1
                         except Exception as err:
-                            logger.error(f"解析店铺失败: {shop_url}, 错误: {e}")
+                            logger.error(f"解析店铺失败: {shop_url}, 错误: {err}")
                             continue
                         self.random_wait(self.wait_range)
             except Exception as err:

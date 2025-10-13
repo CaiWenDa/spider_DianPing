@@ -16,7 +16,7 @@ def main():
         parser.error('最小值必须小于最大值')
     else:
         wait_range = args.wait_range if args.wait_range else [2, 5]
-    spider = DianPingSpider(keyword=args.keyword, city_id=args.city_id, num_pages=args.num_pages, wait_range=wait_range)
+    spider = DianPingSpider(keyword=args.keyword, city_id=args.city_id, num_pages=args.num_pages, wait_range=wait_range, output_file=args.output)
     try:
         spider.crawl()
     except Exception as e:
