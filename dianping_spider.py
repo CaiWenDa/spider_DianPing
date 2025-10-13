@@ -4,6 +4,7 @@ import re
 import random
 from browser_client import BrowserClient
 from saver import save_csv
+from logger import logger
 
 class DianPingSpider:
     def __init__(self, keyword, cityid, numpage):
@@ -31,10 +32,12 @@ class DianPingSpider:
                 raw_phone_num = m.groups()[0].replace('"', '')
                 phone_num_list = raw_phone_num.split(",")
             phone_num = ' '.join(phone_num_list) if phone_num_list else ''
-            print(shopName, phone_num_list)
+            # print(shopName, phone_num_list)
+            logger.info(f"抓取到店铺: {shopName}, 电话: {phone_num}")
             self.data.append([shopName, phone_num])
         except Exception as e:
-            print(f"解析店铺失败: {shop_url}, 错误: {e}")
+            # print(f"解析店铺失败: {shop_url}, 错误: {e}")
+            logger.error(f"解析店铺失败: {shop_url}, 错误: {e}")
 
     def random_wait(self, min_seconds, max_seconds):
         time.sleep(random.randint(min_seconds, max_seconds))
@@ -53,19 +56,23 @@ class DianPingSpider:
                 url = f"https://www.dianping.com/search/keyword/{self.cityid}/0_{self.keyword}/p{page}"
             try:
                 self.browser.get(url)
-                print("登录判定")
+                # print("登录判定")
+                logger.info("登录判定")
                 self.browser.wait_for_element('class name', "tit", timeout=20)
-                print(f"成功访问页面: {url}")
+                # print(f"成功访问页面: {url}")
+                logger.info(f"成功访问页面: {url}")
                 page_source = self.browser.get_page_source()
                 soup = BeautifulSoup(page_source, 'html.parser')
                 div_tits = soup.find_all('div', {'class': 'tit'})
                 for tit in div_tits:
                     shop_link = tit.a.attrs['href'] if tit.a else None
-                    print(shop_link)
+                    # print(shop_link)
+                    logger.info(f"解析店铺连接: {shop_link}")
                     if shop_link:
                         self.parse_shop(shop_link)
                         self.random_wait(2, 5)
             except Exception as err:
-                print(f'[第{page}页] 发生错误: {err}')
+                # print(f'[第{page}页] 发生错误: {err}')
+                logger.error(f'[第{page}页] 发生错误: {err}')
                 continue
         self.browser.close()
