@@ -14,26 +14,23 @@ class DianPingSpider:
         self.shop_data = [["店铺名称", "电话"]]
         self.browser_client = BrowserClient()
 
-    def parse_shop(self, shop_url):
-        try:
-            self.browser_client.get(shop_url)
-            html = self.browser_client.get_page_source()
-            soup = BeautifulSoup(html, 'html.parser')
-            # 获取店铺名称
-            shop_name_tag = soup.find('span', {'class': 'shopName'})
-            shop_name = shop_name_tag.get_text() if shop_name_tag else ''
-            # 获取电话
-            html_text = soup.prettify()
-            phone_match = re.search(r'"phoneNos":\s*\[(.*?)\]', html_text)
-            phone_list = []
-            if phone_match:
-                raw_phone = phone_match.groups()[0].replace('"', '')
-                phone_list = raw_phone.split(",")
-            phone_str = ' '.join(phone_list) if phone_list else ''
-            logger.info(f"抓取到店铺: {shop_name}, 电话: {phone_str}")
-            self.shop_data.append([shop_name, phone_str])
-        except Exception as e:
-            logger.error(f"解析店铺失败: {shop_url}, 错误: {e}")
+    def parse_shop_page(self, shop_url):
+        self.browser_client.get(shop_url)
+        html = self.browser_client.get_page_source()
+        soup = BeautifulSoup(html, 'html.parser')
+        # 获取店铺名称
+        shop_name_tag = soup.find('span', {'class': 'shopName'})
+        shop_name = shop_name_tag.get_text() if shop_name_tag else ''
+        # 获取电话
+        html_text = soup.prettify()
+        phone_match = re.search(r'"phoneNos":\s*\[(.*?)\]', html_text)
+        phone_list = []
+        if phone_match:
+            raw_phone = phone_match.groups()[0].replace('"', '')
+            phone_list = raw_phone.split(",")
+        phone_str = ' '.join(phone_list) if phone_list else ''
+        logger.info(f"抓取到店铺: {shop_name}, 电话: {phone_str}")
+        return [shop_name, phone_str]
 
     def random_wait(self, min_seconds, max_seconds):
         time.sleep(random.randint(min_seconds, max_seconds))
@@ -43,18 +40,27 @@ class DianPingSpider:
 
     def save_csv(self, output_file):
         save_csv(output_file, self.shop_data)
+        logger.info(f"数据已保存到 {output_file}")
 
     def crawl(self):
+        count = 0
+        base_url = f"https://www.dianping.com/search/keyword/{self.city_id}/0_{self.keyword}"
+        url = base_url
+        try:
+            self.browser_client.get(base_url)
+            logger.info("登录判定中...")
+            self.browser_client.wait_for_element('class name', "tit", timeout=60)
+            logger.info(f"成功访问页面: {base_url}")
+        except Exception as err:
+            logger.error(f"初始页面访问失败: {err}")
+            self.browser_client.close()
+            raise err
         for page_num in range(1, self.num_pages):
-            if page_num == 1:
-                url = f"https://www.dianping.com/search/keyword/{self.city_id}/0_{self.keyword}"
-            else:
-                url = f"https://www.dianping.com/search/keyword/{self.city_id}/0_{self.keyword}/p{page_num}"
+            if page_num > 1:
+                url = base_url + f"/p{page_num}"
             try:
                 self.browser_client.get(url)
-                logger.info("登录判定")
-                self.browser_client.wait_for_element('class name', "tit", timeout=20)
-                logger.info(f"成功访问页面: {url}")
+                self.browser_client.wait_for_element('class name', "tit", timeout=60)
                 html = self.browser_client.get_page_source()
                 soup = BeautifulSoup(html, 'html.parser')
                 div_tit_tags = soup.find_all('div', {'class': 'tit'})
@@ -62,9 +68,17 @@ class DianPingSpider:
                     shop_url = div_tit.a.attrs['href'] if div_tit.a else None
                     logger.info(f"解析店铺链接: {shop_url}")
                     if shop_url:
-                        self.parse_shop(shop_url)
-                        self.random_wait(2, 5)
+                        try:
+                            shop_item = self.parse_shop_page(shop_url)
+                            self.shop_data.append(shop_item)
+                            count += 1
+                        except Exception as err:
+                            logger.error(f"解析店铺失败: {shop_url}, 错误: {e}")
+                            continue
+                        self.random_wait(3, 6)
             except Exception as err:
-                logger.error(f'[第{page_num}页] 发生错误: {err}')
+                logger.error(f'[第{page_num}页] 发生错误，检查是否登录: {err}')
                 continue
+        
+        logger.info(f"成功解析 {count} 条目")
         self.browser_client.close()

@@ -1,6 +1,6 @@
 from dianping_spider import DianPingSpider
 import argparse
-
+import os
 
 def main():
     parser = argparse.ArgumentParser(description='一个大众点评爬虫示例')
@@ -10,8 +10,12 @@ def main():
     parser.add_argument('--output', '-o', default='dianpin.csv', type=str, help='输出文件路径')
     args = parser.parse_args()
     spider = DianPingSpider(keyword=args.keyword, city_id=args.cityid, num_pages=args.numpages)
-    spider.crawl()
+    try:
+        spider.crawl()
+    except Exception as e:
+        return
     spider.save_csv(args.output)
+    os.system("pause")
 
 if __name__ == "__main__":
     main()

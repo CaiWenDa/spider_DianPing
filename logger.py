@@ -7,8 +7,9 @@ logger = logging.getLogger()
 
 def set_logger():
     logger.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - '
-                                  '%(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(filename)s[line:%(lineno)d] - '
+                                  '%(levelname)s: %(message)s',
+                                  datefmt='%Y-%m-%d %H:%M:%S')
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
