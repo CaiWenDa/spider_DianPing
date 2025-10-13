@@ -60,7 +60,7 @@ class DianPingSpider:
             logger.error(f"初始页面访问失败: {err}")
             self.browser_client.close()
             raise err
-        for page_num in range(1, self.num_pages):
+        for page_num in range(1, self.num_pages + 1):
             if page_num > 1:
                 url = base_url + f"/p{page_num}"
             try:
