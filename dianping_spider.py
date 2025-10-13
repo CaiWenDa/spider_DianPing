@@ -7,72 +7,64 @@ from saver import save_csv
 from logger import logger
 
 class DianPingSpider:
-    def __init__(self, keyword, cityid, numpage):
+    def __init__(self, keyword, city_id, num_pages):
         self.keyword = keyword
-        self.cityid = cityid
-        self.numpage = numpage
-        self.data = [["店铺名称", "电话"]]
-        self.browser = BrowserClient()
+        self.city_id = city_id
+        self.num_pages = num_pages
+        self.shop_data = [["店铺名称", "电话"]]
+        self.browser_client = BrowserClient()
 
     def parse_shop(self, shop_url):
         try:
-            self.browser.get(shop_url)
-            page_source = self.browser.get_page_source()
-            soup = BeautifulSoup(page_source, 'html.parser')
+            self.browser_client.get(shop_url)
+            html = self.browser_client.get_page_source()
+            soup = BeautifulSoup(html, 'html.parser')
             # 获取店铺名称
-            span_shopName = soup.find('span', {'class': 'shopName'})
-            shopName = ''
-            if span_shopName:
-                shopName = span_shopName.get_text()
+            shop_name_tag = soup.find('span', {'class': 'shopName'})
+            shop_name = shop_name_tag.get_text() if shop_name_tag else ''
             # 获取电话
-            script_txt = soup.prettify()
-            m = re.search(r'"phoneNos":\s*\[(.*?)\]', script_txt)
-            phone_num_list = []
-            if m:
-                raw_phone_num = m.groups()[0].replace('"', '')
-                phone_num_list = raw_phone_num.split(",")
-            phone_num = ' '.join(phone_num_list) if phone_num_list else ''
-            # print(shopName, phone_num_list)
-            logger.info(f"抓取到店铺: {shopName}, 电话: {phone_num}")
-            self.data.append([shopName, phone_num])
+            html_text = soup.prettify()
+            phone_match = re.search(r'"phoneNos":\s*\[(.*?)\]', html_text)
+            phone_list = []
+            if phone_match:
+                raw_phone = phone_match.groups()[0].replace('"', '')
+                phone_list = raw_phone.split(",")
+            phone_str = ' '.join(phone_list) if phone_list else ''
+            logger.info(f"抓取到店铺: {shop_name}, 电话: {phone_str}")
+            self.shop_data.append([shop_name, phone_str])
         except Exception as e:
-            # print(f"解析店铺失败: {shop_url}, 错误: {e}")
             logger.error(f"解析店铺失败: {shop_url}, 错误: {e}")
 
     def random_wait(self, min_seconds, max_seconds):
         time.sleep(random.randint(min_seconds, max_seconds))
-    
+
     def get_data(self):
-        return self.data
+        return self.shop_data
 
     def save_csv(self, output_file):
-        save_csv(output_file, self.data)
+        save_csv(output_file, self.shop_data)
 
     def crawl(self):
-        for page in range(1, self.numpage):
-            if page == 1:
-                url = f"https://www.dianping.com/search/keyword/{self.cityid}/0_{self.keyword}"
+        for page_num in range(1, self.num_pages):
+            if page_num == 1:
+                url = f"https://www.dianping.com/search/keyword/{self.city_id}/0_{self.keyword}"
             else:
-                url = f"https://www.dianping.com/search/keyword/{self.cityid}/0_{self.keyword}/p{page}"
+                url = f"https://www.dianping.com/search/keyword/{self.city_id}/0_{self.keyword}/p{page_num}"
             try:
-                self.browser.get(url)
-                # print("登录判定")
+                self.browser_client.get(url)
                 logger.info("登录判定")
-                self.browser.wait_for_element('class name', "tit", timeout=20)
-                # print(f"成功访问页面: {url}")
+                self.browser_client.wait_for_element('class name', "tit", timeout=20)
                 logger.info(f"成功访问页面: {url}")
-                page_source = self.browser.get_page_source()
-                soup = BeautifulSoup(page_source, 'html.parser')
-                div_tits = soup.find_all('div', {'class': 'tit'})
-                for tit in div_tits:
-                    shop_link = tit.a.attrs['href'] if tit.a else None
-                    # print(shop_link)
-                    logger.info(f"解析店铺连接: {shop_link}")
-                    if shop_link:
-                        self.parse_shop(shop_link)
+                html = self.browser_client.get_page_source()
+                soup = BeautifulSoup(html, 'html.parser')
+                div_tit_tags = soup.find_all('div', {'class': 'tit'})
+                for div_tit in div_tit_tags:
+                    shop_url = div_tit.a.attrs['href'] if div_tit.a else None
+                    logger.info(f"解析店铺链接: {shop_url}")
+                    if shop_url:
+                        self.parse_shop(shop_url)
                         self.random_wait(2, 5)
             except Exception as err:
-                # print(f'[第{page}页] 发生错误: {err}')
-                logger.error(f'[第{page}页] 发生错误: {err}')
+                logger.error(f'[第{page_num}页] 发生错误: {err}')
                 continue
-        self.browser.close()
+        self.browser_client.close()

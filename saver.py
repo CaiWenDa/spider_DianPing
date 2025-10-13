@@ -1,6 +1,6 @@
 import csv
 
-def save_csv(output_file, data):
-    with open(output_file, 'w', newline='', encoding='utf-8') as csvfile:
-        spamwriter = csv.writer(csvfile)
-        spamwriter.writerows(data)
+def save_csv(file_path, rows):
+    with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerows(rows)
