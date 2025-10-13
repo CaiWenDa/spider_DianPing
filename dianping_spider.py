@@ -7,12 +7,13 @@ from saver import save_csv
 from logger import logger
 
 class DianPingSpider:
-    def __init__(self, keyword, city_id, num_pages):
+    def __init__(self, keyword, city_id, num_pages, wait_range):
         self.keyword = keyword
         self.city_id = city_id
         self.num_pages = num_pages
         self.shop_data = [["店铺名称", "电话"]]
         self.browser_client = BrowserClient()
+        self.wait_range = wait_range
 
     def parse_shop_page(self, shop_url):
         self.browser_client.get(shop_url)
@@ -32,8 +33,12 @@ class DianPingSpider:
         logger.info(f"抓取到店铺: {shop_name}, 电话: {phone_str}")
         return [shop_name, phone_str]
 
-    def random_wait(self, min_seconds, max_seconds):
-        time.sleep(random.randint(min_seconds, max_seconds))
+    def random_wait(self, wait_range):
+        if len(wait_range) == 2:
+            min_seconds, max_seconds = wait_range
+            time.sleep(random.randint(min_seconds, max_seconds))
+        else:
+            time.sleep(2)
 
     def get_data(self):
         return self.shop_data
@@ -75,7 +80,7 @@ class DianPingSpider:
                         except Exception as err:
                             logger.error(f"解析店铺失败: {shop_url}, 错误: {e}")
                             continue
-                        self.random_wait(3, 6)
+                        self.random_wait(self.wait_range)
             except Exception as err:
                 logger.error(f'[第{page_num}页] 发生错误，检查是否登录: {err}')
                 continue
