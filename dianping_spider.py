@@ -31,7 +31,10 @@ class DianPingSpider:
             raw_phone = phone_match.groups()[0].replace('"', '')
             phone_list = raw_phone.split(",")
         phone_str = ' '.join(phone_list) if phone_list else ''
-        if not phone_str or not phone_str:
+
+        if not phone_str and not phone_str and re.search('403 Forbidden', html_text):
+            raise Exception("403 Forbidden - 可能被封禁")
+        elif not phone_str or not phone_str:
             raise Exception("未找到数据")
         logger.info(f"抓取到店铺: {shop_name}, 电话: {phone_str}")
         return [shop_name, phone_str]
