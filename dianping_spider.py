@@ -47,6 +47,10 @@ class DianPingSpider:
         save_csv(output_file, self.shop_data)
         logger.info(f"数据已保存到 {output_file}")
 
+    def add_csv_row(self, output_file, row):
+        add_csv_row(output_file, row)
+        logger.info(f"已添加新行到 {output_file}: {row}")
+
     def crawl(self):
         count = 0
         base_url = f"https://www.dianping.com/search/keyword/{self.city_id}/0_{self.keyword}"
@@ -76,6 +80,7 @@ class DianPingSpider:
                         try:
                             shop_item = self.parse_shop_page(shop_url)
                             self.shop_data.append(shop_item)
+                            self.add_csv_row(shop_item)
                             count += 1
                         except Exception as err:
                             logger.error(f"解析店铺失败: {shop_url}, 错误: {e}")

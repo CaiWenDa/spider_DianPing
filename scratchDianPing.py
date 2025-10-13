@@ -19,7 +19,6 @@ def main():
     spider = DianPingSpider(keyword=args.keyword, city_id=args.city_id, num_pages=args.num_pages, wait_range=wait_range)
     try:
         spider.crawl()
-        spider.save_csv(args.output)
     except Exception as e:
         return
     os.system("pause")
