@@ -70,6 +70,7 @@ class DianPingSpider:
             logger.error(f"初始页面访问失败: {err}")
             self.browser_client.close()
             raise err
+        self.add_csv_row(self.output_file, ["店铺名称", "电话"])
         for page_num in range(1, self.num_pages + 1):
             if page_num > 1:
                 url = base_url + f"/p{page_num}"
