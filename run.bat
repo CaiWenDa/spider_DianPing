@@ -8,4 +8,4 @@ set num_pages=1
 set wait_range=3 6
 ::output_file 输出文件路径
 set output_file="dianping.csv"
-python ./scratchDianPing.py --keyword %keyword% --city_id %city_id% --num_pages %num_pages% --wait_range %wait_range% --output_file %output_file%
+python ./scratchDianPing.py --keyword %keyword% --city_id %city_id% --num_pages %num_pages% --wait_range %wait_range% --output %output_file%
