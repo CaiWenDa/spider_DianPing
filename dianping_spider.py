@@ -82,12 +82,11 @@ class DianPingSpider:
                     if shop_url:
                         try:
                             shop_item = self.parse_shop_page(shop_url)
+                            self.shop_data.append(shop_item)
+                            self.add_csv_row(self.output_file, shop_item)
+                            count += 1
                         except Exception as err:
                             logger.error(f"解析店铺失败: {shop_url}, 错误: {err}")
-                            continue
-                        self.shop_data.append(shop_item)
-                        self.add_csv_row(self.output_file, shop_item)
-                        count += 1
                         self.random_wait(self.wait_range)
             except Exception as err:
                 logger.error(f'[第{page_num}页] 发生错误，检查是否登录: {err}')
