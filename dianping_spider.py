@@ -7,12 +7,12 @@ import saver
 from logger import logger
 
 class DianPingSpider:
-    def __init__(self, keyword, city_id, num_pages, wait_range, output_file):
+    def __init__(self, keyword, city_id, num_pages, wait_range, output_file, browser_type):
         self.keyword = keyword
         self.city_id = city_id
         self.num_pages = num_pages
         self.shop_data = [["店铺名称", "电话"]]
-        self.browser_client = BrowserClient()
+        self.browser_client = BrowserClient(browser_type)
         self.wait_range = wait_range
         self.output_file = output_file
 
@@ -50,12 +50,18 @@ class DianPingSpider:
         return self.shop_data
 
     def save_csv(self, output_file):
-        saver.save_csv(output_file, self.shop_data)
-        logger.info(f"数据已保存到 {output_file}")
+        try:
+            saver.save_csv(output_file, self.shop_data)
+            logger.info(f"数据已保存到 {output_file}")
+        except Exception as e:
+            logger.error(f"保存数据到 {output_file} 时失败: {e}")
 
     def add_csv_row(self, output_file, row):
-        saver.add_csv_row(output_file, row)
-        logger.info(f"已添加新行到 {output_file}: {row}")
+        try:
+            saver.add_csv_row(output_file, row)
+            logger.info(f"已添加新行到 {output_file}: {row}")
+        except Exception as e:
+            logger.error(f"添加行到 {output_file} 时失败: {e}")
 
     def crawl(self):
         count = 0

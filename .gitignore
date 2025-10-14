@@ -33,6 +33,7 @@ bld/
 [Ll]og/
 [Ll]ogs/
 [Bb]uild
+[Tt]emp/
 
 # Include dir
 seqan/
