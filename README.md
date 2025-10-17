@@ -1,31 +1,35 @@
 # 基于 Selenium 的大众点评爬虫示例
 
 ## 安装
-爬虫依赖于 Selenium 和 chrome/edge 浏览器，需要安装最新浏览器和对应版本的 Selenium 驱动程序以及Python 的 Selenium，BeautifulSoup4 库
+爬虫依赖于 Selenium 和 chrome/edge 浏览器，需要安装最新浏览器和对应版本的 Selenium 驱动程序以及 Python 的 Selenium，BeautifulSoup4 库
 
-Selenium 驱动下载
+1. Selenium 驱动下载
+
+Chrome：
 ```
-Chrome：https://googlechromelabs.github.io/chrome-for-testing/
-
-Edge：https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
+https://googlechromelabs.github.io/chrome-for-testing/
+```
+Edge：
+```
+https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
 ````
-克隆存储库
+2. 克隆存储库
 ```
 git clone https://github.com/CaiWenDa/spider_DianPing.git
 ```
 
-将 Selenium 驱动复制到 spider_DianPing 目录下
+3. 将 Selenium 驱动复制到 spider_DianPing 目录下
 
-安装 Selenium 和 BeautifulSoup4
+4. 安装 Selenium 和 BeautifulSoup4
 ```
 conda install conda-forge::selenium
 conda install conda-forge::beautifulsoup4
 ```
 
 ## 运行
-### 方式一
-1. 修改 run.bat 参数（参数说明见下方）
+### 方式一 (仅 Windows)
 
+1. 修改 run.bat 参数 (参数说明见下方)
 2. 直接运行 run.bat
 
 ### 方式二
@@ -37,10 +41,14 @@ python ./scratchDianPing.py [-h] --keyword KEYWORD --city_id CITY_ID [--num_page
 ```
 [--help -h]
 <--keyword -k KEYWORD> 搜索关键词
-<--city_id -c CITY_ID> 城市id 详见 docs/lacation.md
+<--city_id -c CITY_ID> 城市id (详见 docs/lacation.md)
 [--num_pages -n NUM_PAGES] 搜索页码范围
 [--output -o OUTPUT] 输出文件路径
 [--wait_range -w MIN MAX] 等待时间范围 [MIN, MAX] 秒
 [--browser -b {chrome,edge}] 浏览器支持 chrome 或 edge
 ```
-### 
+## 参阅
+Selenium 文档
+```
+https://www.selenium.dev/documentation/
+```
