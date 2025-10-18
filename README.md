@@ -57,9 +57,6 @@ python ./scratchDianPing.py [-h] --keyword KEYWORD --city_id CITY_ID [--num_page
 [--browser -b {chrome,edge}] 浏览器支持 chrome 或 edge
 ```
 ## 参阅
-Selenium 文档
-```
-https://www.selenium.dev/documentation/
-```
-
-[城市代码说明](docs/location.md)
+[城市代码说明](docs/location.md)  
+[Selenium 文档](https://www.selenium.dev/documentation/)  
+[Selenium Python 开发文档](https://selenium-python.readthedocs.io/index.html)
