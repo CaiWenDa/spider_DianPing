@@ -1,5 +1,10 @@
 # 基于 Selenium 的大众点评爬虫示例
 
+## Python 开发环境
+anaconda3  
+conda-25.5.1  
+python-3.14
+
 ## 安装
 爬虫依赖于 Selenium 和 chrome/edge 浏览器，需要安装最新浏览器和对应版本的 Selenium 驱动程序以及 Python 的 Selenium，BeautifulSoup4 库
 
@@ -22,6 +27,8 @@ git clone https://github.com/CaiWenDa/spider_DianPing.git
 
 4. 安装 Selenium 和 BeautifulSoup4
 ```
+conda create -n scratch
+conda activate scratch
 conda install conda-forge::selenium
 conda install conda-forge::beautifulsoup4
 ```
@@ -29,8 +36,10 @@ conda install conda-forge::beautifulsoup4
 ## 运行
 ### 方式一 (仅 Windows)
 
-1. 修改 run.bat 参数 (参数说明见下方)
-2. 直接运行 run.bat
+1. 下载 [Release](https://github.com/CaiWenDa/spider_DianPing/releases/tag/spider) 版本 exe
+2. 确保 Selenium 驱动复制到和 exe 相同目录下
+3. 修改 run.bat 参数 (参数说明见下方)
+4. 直接运行 run.bat
 
 ### 方式二
 ```
@@ -52,3 +61,5 @@ Selenium 文档
 ```
 https://www.selenium.dev/documentation/
 ```
+
+[城市代码说明](docs/location.md)
