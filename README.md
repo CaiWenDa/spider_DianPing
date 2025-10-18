@@ -17,7 +17,7 @@ https://googlechromelabs.github.io/chrome-for-testing/
 Edge：
 ```
 https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
-````
+```
 2. 克隆存储库
 ```
 git clone https://github.com/CaiWenDa/spider_DianPing.git
@@ -56,6 +56,13 @@ python ./scratchDianPing.py [-h] --keyword KEYWORD --city_id CITY_ID [--num_page
 [--wait_range -w MIN MAX] 等待时间范围 [MIN, MAX] 秒
 [--browser -b {chrome,edge}] 浏览器支持 chrome 或 edge
 ```
+
+## 注意事项
+
+- 由于大众点评的反爬非常严格，即使人工手动搜索频繁也很可能被封，爬虫爬取过程被封很常见，考虑将等待时间范围调大  
+- 爬虫识别数据依赖网页格式，由于大众点评这类网站很可能会随时变化网页格式，爬虫可能失效，如果可能，尽量手动修改代码以应对这类情况  
+- 本程序仅作为简单爬取示例，目前只能爬取商铺信息的名称和电话，如果需要其他信息，请自行手动修改代码实现，同时欢迎向本项目贡献代码
+
 ## 参阅
 [城市代码说明](docs/location.md)  
 [Selenium 文档](https://www.selenium.dev/documentation/)  
