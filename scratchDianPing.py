@@ -25,6 +25,7 @@ def main():
         spider.crawl()
     except KeyboardInterrupt as e:
         print("程序被用户中断", e)
+        spider.close_browser()
     
     # 确保在程序结束时暂停，以便查看输出
     os.system("pause")

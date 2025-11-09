@@ -104,3 +104,6 @@ class DianPingSpider:
         
         logger.info(f"成功解析 {count} 条目")
         self.browser_client.close()
+    
+    def close_browser(self):
+        self.browser_client.close()
